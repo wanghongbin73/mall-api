@@ -1,0 +1,27 @@
+stages:
+- name: compile
+  steps:
+  - runScriptConfig:
+      image: golang:latest
+      shellScript: |-
+        go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct
+                go mod tidy
+                pwd
+                go build -o ./bin/schedule
+- name: Publish
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: .
+      tag: schedule:${CICD_EXECUTION_SEQUENCE}
+      pushRemote: true
+      registry: index.docker.io
+- name: Deploy
+  steps:
+  - applyAppConfig:
+      catalogTemplate: cattle-global-data:library-argo-cd
+      version: 2.3.5
+      name: sechdule-user
+      targetNamespace: schedule-api
+timeout: 60
+notification: {}

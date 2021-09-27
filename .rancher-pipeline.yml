@@ -18,10 +18,7 @@ stages:
       registry: index.docker.io
 - name: Deploy
   steps:
-  - applyAppConfig:
-      catalogTemplate: cattle-global-data:library-argo-cd
-      version: 2.3.5
-      name: sechdule-user
-      targetNamespace: schedule-api
+  - applyYamlConfig:
+      path: ./deployment.yaml
 timeout: 60
 notification: {}
